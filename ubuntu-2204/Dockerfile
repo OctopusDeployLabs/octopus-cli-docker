@@ -5,7 +5,7 @@ ARG DEBIAN_FRONTEND noninteractive
 ARG OCTOPUS_CLI_VERSION=1.4.0
 
 RUN apt-get update && \
-    apt-get install -y curl
+    apt-get install -y curl apt-transport-https software-properties-common
 
 RUN curl -L https://github.com/OctopusDeploy/cli/raw/main/scripts/install.sh | VERSION=v$OCTOPUS_CLI_VERSION bash
 
