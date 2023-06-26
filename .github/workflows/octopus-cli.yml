@@ -115,7 +115,7 @@ jobs:
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
-          docker manifest create octopuslabs/octopus-cli:latest octopuslabs/octopus-cli:latest-alpine octopuslabs/octopus-cli:latest-ubuntu.2204
+          docker manifest create octopuslabs/octopus-cli:latest octopuslabs/octopus-cli:latest-alpine
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
 
       - name: Push latest image manifest
@@ -129,7 +129,7 @@ jobs:
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
-          docker manifest create octopuslabs/octopus-cli:$VERSION_NUMBER octopuslabs/octopus-cli:$VERSION_NUMBER-alpine octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204
+          docker manifest create octopuslabs/octopus-cli:$VERSION_NUMBER octopuslabs/octopus-cli:$VERSION_NUMBER-alpine
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
 
       - name: Push version image manifest
