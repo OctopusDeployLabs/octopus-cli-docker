@@ -60,19 +60,11 @@ jobs:
           
         shell: powershell
           
-  # This workflow contains a single job called "build"
   build-linux:
-    # define needs
     needs: [get-octopus-cli-version]
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-
-      # Login to docker
       - name: Docker Hub login
         env:
           USERNAME: ${{ secrets.DOCKER_HUB_USER }}
@@ -80,20 +72,34 @@ jobs:
         run: |
              docker login --username $USERNAME --password "$PASSWORD"
 
-      # Build ubuntu images
       - name: Build the alpine docker image
         env: 
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: docker build ./alpine --build-arg OCTOPUS_CLI_VERSION=${{ needs.get-octopus-cli-version.outputs.VERSION }} --tag octopuslabs/octopus-cli:${{ needs.get-octopus-cli-version.outputs.VERSION }}-alpine --tag octopuslabs/octopus-cli:latest-alpine
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
         
-      - name: Push the alpine image
+      - name: Push the alpine images
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
           docker push octopuslabs/octopus-cli:$VERSION_NUMBER-alpine
           docker push octopuslabs/octopus-cli:latest-alpine
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
+
+      - name: Build the ubuntu.2204 Docker image      
+        env:
+          VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}     
+        run: docker build ./ubuntu-2204 --build-arg OCTOPUS_CLI_VERSION=${{ needs.get-octopus-cli-version.outputs.VERSION }} --tag octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204 --tag octopuslabs/octopus-cli:latest-ubuntu.2204
+        if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
+      
+      - name: Push the ubuntu.2204 version images
+        env:
+          VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}     
+        run: docker push octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204
+        run: |
+          docker push octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204
+          docker push octopuslabs/octopus-cli:latest-ubuntu.2204
+        if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}  
 
   build-docker-manifest:
     needs: [build-linux, get-octopus-cli-version]
@@ -106,18 +112,30 @@ jobs:
           PASSWORD: ${{ secrets.DOCKER_HUB_PAT }}
         run: docker login --username $USERNAME --password "$PASSWORD"
 
-      - name: Build manifests
+      - name: Build latest image manifest
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
-          docker manifest create octopuslabs/octopus-cli:latest octopuslabs/octopus-cli:latest-alpine
-          docker manifest create octopuslabs/octopus-cli:$VERSION_NUMBER octopuslabs/octopus-cli:$VERSION_NUMBER-alpine
+          docker manifest create octopuslabs/octopus-cli:latest octopuslabs/octopus-cli:latest-alpine octopuslabs/octopus-cli:latest-ubuntu.2204
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
 
-      - name: Push manifests
+      - name: Push latest image manifest
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
           docker manifest push octopuslabs/octopus-cli:latest
+        if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
+
+      - name: Build version image manifest
+        env:
+          VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
+        run: |
+          docker manifest create octopuslabs/octopus-cli:$VERSION_NUMBER octopuslabs/octopus-cli:$VERSION_NUMBER-alpine octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204
+        if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
+
+      - name: Push version image manifest
+        env:
+          VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
+        run: |
           docker manifest push octopuslabs/octopus-cli:$VERSION_NUMBER
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
