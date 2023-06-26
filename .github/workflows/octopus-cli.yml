@@ -92,10 +92,9 @@ jobs:
         run: docker build ./ubuntu-2204 --build-arg OCTOPUS_CLI_VERSION=${{ needs.get-octopus-cli-version.outputs.VERSION }} --tag octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204 --tag octopuslabs/octopus-cli:latest-ubuntu.2204
         if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
       
-      - name: Push the ubuntu.2204 version images
+      - name: Push the ubuntu.2204 images
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}     
-        run: docker push octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204
         run: |
           docker push octopuslabs/octopus-cli:$VERSION_NUMBER-ubuntu.2204
           docker push octopuslabs/octopus-cli:latest-ubuntu.2204
