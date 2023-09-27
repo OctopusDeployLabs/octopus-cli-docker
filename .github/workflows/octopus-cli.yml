@@ -19,45 +19,52 @@ jobs:
         run: |
           $chocoInformationRaw = choco info octopus-cli --limitoutput
           $version = ($chocoInformationRaw.Split("|"))[1]
-          $versionSplit = $version.Split(".")
-          
-          Write-Host "Retrieving tags ..."
-          
-          $response = try {
-            $repositoryTags = Invoke-RestMethod "https://registry.hub.docker.com/v2/repositories/octopuslabs/octopus-cli/tags"
-            Write-Host "Retrieval successful!"
-          } catch [System.Net.WebException] { 
-            $_.Exception.Response 
-            Write-Host "Retrieval failed!!"
-          }
-          
-          Write-Host "Version: $version"
-          echo "VERSION=$version" >> $env:GITHUB_OUTPUT
-          
-          if ($null -eq $response)
+          if($version -like "*Failed to fetch results*") 
           {
-            $matchingTag = $repositoryTags.results | Where-Object {$_.Name -eq $version}
-            
-            if ($null -ne $matchingTag)
-            {
-              Write-Host "Docker container already has latest version."
+              Write-Host "Failed to retrieve octopus-cli details from chocolatey"
               echo "CONTINUE=No" >> $env:GITHUB_OUTPUT
-            }
-            else
-            {
-              Write-Host "vNext Octopus CLI has been updated, create new image."
-              echo "CONTINUE=Yes" >> $env:GITHUB_OUTPUT
-            }
           }
-          else
+          else 
           {
-            if ($response.StatusCode.value__ -eq 404)
-            {
-              Write-Host "No tags exist for repo, assuming first build."
-              echo "CONTINUE=Yes" >> $env:GITHUB_OUTPUT
-            }
-          }
+              $versionSplit = $version.Split(".")
           
+              Write-Host "Retrieving tags ..."
+              
+              $response = try {
+                $repositoryTags = Invoke-RestMethod "https://registry.hub.docker.com/v2/repositories/octopuslabs/octopus-cli/tags"
+                Write-Host "Retrieval successful!"
+              } catch [System.Net.WebException] { 
+                $_.Exception.Response 
+                Write-Host "Retrieval failed!!"
+              }
+              
+              Write-Host "Version: $version"
+              echo "VERSION=$version" >> $env:GITHUB_OUTPUT
+              
+              if ($null -eq $response)
+              {
+                $matchingTag = $repositoryTags.results | Where-Object {$_.Name -eq $version}
+                
+                if ($null -ne $matchingTag)
+                {
+                  Write-Host "Docker container already has latest version."
+                  echo "CONTINUE=No" >> $env:GITHUB_OUTPUT
+                }
+                else
+                {
+                  Write-Host "vNext Octopus CLI has been updated, create new image."
+                  echo "CONTINUE=Yes" >> $env:GITHUB_OUTPUT
+                }
+              }
+              else
+              {
+                if ($response.StatusCode.value__ -eq 404)
+                {
+                  Write-Host "No tags exist for repo, assuming first build."
+                  echo "CONTINUE=Yes" >> $env:GITHUB_OUTPUT
+                }
+              }
+          }
         shell: powershell
           
   build-linux:
