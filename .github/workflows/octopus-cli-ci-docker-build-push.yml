@@ -20,7 +20,7 @@ jobs:
       VERSION: ${{ steps.choco.outputs.VERSION }}
       CONTINUE: ${{ steps.choco.outputs.CONTINUE }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - id: choco
         name: Compare latest version with container
         run: |
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Docker Hub login
         env:
