@@ -1,16 +1,16 @@
-name: Build octopus-cli Docker image
+name: Build octopus-cli-ci Docker image
 on:
   push:
     branches: 
     - main
     paths:
-    - base/** 
+    - ci-image/** 
   schedule:
     - cron: '0 5 * * *'
   workflow_dispatch:
 
 env:
-   REGISTRY_IMAGE: octopuslabs/octopus-cli
+   REGISTRY_IMAGE: octopuslabs/octopus-cli-ci
 
 jobs:
   
@@ -39,8 +39,6 @@ jobs:
               
               echo "VERSION=$versionToCompare" >> $env:GITHUB_OUTPUT
           
-              Write-Host "Retrieving tags ..."
-              
               $response = try {
                 $repositoryTags = Invoke-RestMethod "https://registry.hub.docker.com/v2/repositories/${{ env.REGISTRY_IMAGE }}/tags"
                 Write-Host "Retrieval successful!"
@@ -73,27 +71,29 @@ jobs:
                 }
               }
           }
+          
         shell: powershell
           
   build-linux:
     needs: [get-octopus-cli-version]
     if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
+
       - name: Docker Hub login
         env:
           USERNAME: ${{ secrets.DOCKER_HUB_USER }}
           PASSWORD: ${{ secrets.DOCKER_HUB_PAT }}
-        run: |
-             docker login --username $USERNAME --password "$PASSWORD"
+        run: docker login --username $USERNAME --password "$PASSWORD"
 
       - name: Build the alpine docker image
         env: 
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
-        run: docker build ./base/alpine --build-arg OCTOPUS_CLI_VERSION=${{ needs.get-octopus-cli-version.outputs.VERSION }} --tag ${{ env.REGISTRY_IMAGE }}:${{ needs.get-octopus-cli-version.outputs.VERSION }}-alpine --tag ${{ env.REGISTRY_IMAGE }}:latest-alpine
+        run: docker build ./ci-image/alpine --build-arg OCTOPUS_CLI_VERSION=${{ needs.get-octopus-cli-version.outputs.VERSION }} --tag ${{ env.REGISTRY_IMAGE }}:${{ needs.get-octopus-cli-version.outputs.VERSION }}-alpine --tag ${{ env.REGISTRY_IMAGE }}:latest-alpine
         
-      - name: Push the alpine images
+      - name: Push the alpine image
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
@@ -101,8 +101,8 @@ jobs:
           docker push ${{ env.REGISTRY_IMAGE }}:latest-alpine
 
   build-docker-manifest:
-    if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
     needs: [build-linux, get-octopus-cli-version]
+    if: ${{ needs.get-octopus-cli-version.outputs.CONTINUE == 'Yes' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -112,26 +112,16 @@ jobs:
           PASSWORD: ${{ secrets.DOCKER_HUB_PAT }}
         run: docker login --username $USERNAME --password "$PASSWORD"
 
-      - name: Build latest image manifest
+      - name: Build manifests
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
           docker manifest create ${{ env.REGISTRY_IMAGE }}:latest ${{ env.REGISTRY_IMAGE }}:latest-alpine
+          docker manifest create ${{ env.REGISTRY_IMAGE }}:$VERSION_NUMBER ${{ env.REGISTRY_IMAGE }}:$VERSION_NUMBER-alpine
 
-      - name: Push latest image manifest
+      - name: Push manifests
         env:
           VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
         run: |
           docker manifest push ${{ env.REGISTRY_IMAGE }}:latest
-
-      - name: Build version image manifest
-        env:
-          VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
-        run: |
-          docker manifest create ${{ env.REGISTRY_IMAGE }}:$VERSION_NUMBER ${{ env.REGISTRY_IMAGE }}:$VERSION_NUMBER-alpine
-
-      - name: Push version image manifest
-        env:
-          VERSION_NUMBER: ${{ needs.get-octopus-cli-version.outputs.VERSION }}
-        run: |
           docker manifest push ${{ env.REGISTRY_IMAGE }}:$VERSION_NUMBER

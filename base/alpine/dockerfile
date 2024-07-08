@@ -1,6 +1,6 @@
 FROM alpine:latest
 
-ARG OCTOPUS_CLI_VERSION=1.4.0
+ARG OCTOPUS_CLI_VERSION=2.4.0
 
 RUN apk update && apk upgrade && apk add --no-cache bash curl
 

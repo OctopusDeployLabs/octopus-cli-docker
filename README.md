@@ -38,6 +38,22 @@ Octopus CLI images that are tagged with Ubuntu derivatives are no longer maintai
 - `octopuslabs/octopus-cli:latest-ubuntu.2004`
 - `octopuslabs/octopus-cli:latest-ubuntu.2204`
 
+### Octopus CLI CI
+
+This is a CI-server compatible image containing the `octopus` [command line tool](https://github.com/OctopusDeploy/cli/blob/main/README.md).
+It's identical to the [octopuslabs/octopus-cli](https://hub.docker.com/r/octopuslabs/octopus-cli) image except that its `ENTRYPOINT` method is overriden to be empty (`""`).
+
+A new image is built each time a new version of the `octopus` CLI is detected. The version tag corresponds to the version of the `octopus` CLI installed on the image.
+
+#### Tags
+
+- `octopuslabs/octopus-cli-ci:latest`
+- `octopuslabs/octopus-cli-ci:latest-alpine`
+- `octopuslabs/octopus-cli-ci:VERSION`
+- `octopuslabs/octopus-cli-ci:VERSION-alpine`
+
+You can retrieve a list of all available tags on [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli-ci/tags).
+
 ## Support
 
-If you find a bug or encounter a problem with these images, please raise an [issue](https://github.com/OctopusDeployLabs/workertools/issues).
+If you find a bug or encounter a problem with these images, please raise an [issue](https://github.com/OctopusDeployLabs/octopus-cli-docker/issues).
