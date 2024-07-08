@@ -1,34 +1,43 @@
 # Octopus CLI Docker image
 
-This repository contains a Docker image for the new [_vNext_ Octopus CLI](https://github.com/OctopusDeploy/cli): `octopus`.
+This repository contains Dockerfiles used to build container images for the [Octopus CLI](https://github.com/OctopusDeploy/cli) called: `octopus`.
 
-There are both `alpine` and `ubuntu 22.04` images built in this repository.
+## Platforms
 
-**Note: Please consider this repository provided as is.  If there are any issues please do not contact support.**
+Images are typically available for:
 
-## Tags
+- `linux/amd64` (based on `alpine`)
 
+## Available images
 
-The following images are built in this repo:
+The following images are built from this repository:
 
-- alpine (tagged `latest` in [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli/tags?page=1&name=latest))
-- Ubuntu 22.04 
+- [octopus-cli](#octopus-cli) (`octopuslabs/octopus-cli`)
+- [octopus-cli-ci](#octopus-cli-ci) (`octopuslabs/octopus-cli-ci`)
+- [octo-ci](#octo-ci) (`octopuslabs/octo-ci`)
 
-A new image will be built each time a new version of Octopus CLI is created.  
+### Octopus CLI
 
-The tags are as follows:
-- Latest
-- [Version] For example `1.3.0`
-- Latest-[architecture] For example `latest-alpine`
-- [Version]-[architecture] For example `1.3.0-alpine`
+This image contains the `octopus` [command line tool](https://github.com/OctopusDeploy/cli/blob/main/README.md) (written in Golang).
 
-The version tag corresponds to the version of the Octopus CLI installed on the image. 
+A new image is built each time a new version of the `octopus` CLI is detected. The version tag corresponds to the version of the `octopus` CLI installed on the image.
 
-You can retrieve a list of all available tags for octopuslabs/octopus-cli at in [DockerHub](https://hub.docker.com/v2/repositories/octopuslabs/octopus-cli/tags).
+#### Tags
 
-### Docker files
+- `octopuslabs/octopus-cli:latest`
+- `octopuslabs/octopus-cli:latest-alpine`
+- `octopuslabs/octopus-cli:VERSION`
+- `octopuslabs/octopus-cli:VERSION-alpine`
 
-Tag | Dockerfile
----------| ---------------
-alpine | [Dockerfile](https://github.com/OctopusDeployLabs/octopus-cli-docker/blob/main/alpine/dockerfile)
-Ubuntu 22.04 | [Dockerfile](https://github.com/OctopusDeployLabs/octopus-cli-docker/blob/main/ubuntu-2204/dockerfile)
+You can retrieve a list of all available tags on [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli/tags).
+
+##### Deprecated tags
+
+Octopus CLI images that are tagged with Ubuntu derivatives are no longer maintained. For example:
+
+- `octopuslabs/octopus-cli:latest-ubuntu.2004`
+- `octopuslabs/octopus-cli:latest-ubuntu.2204`
+
+## Support
+
+If you find a bug or encounter a problem with these images, please raise an [issue](https://github.com/OctopusDeployLabs/workertools/issues).
