@@ -5,7 +5,7 @@ on:
     branches: 
     - main
     paths:
-    - octopus-cli/**
+    - ci-image/**
   schedule:
     - cron: '0 5 * * *'
   workflow_dispatch:
