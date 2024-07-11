@@ -17,11 +17,13 @@ The following DockerHub images are built from this repository:
 
 - [octopus-cli](#octopus-cli) (`octopuslabs/octopus-cli`)
 - [octopus-cli-ci](#octopus-cli-ci) (`octopuslabs/octopus-cli-ci`)
+- [octo-cli-ci](#octo-cli-ci) (`octopuslabs/octo-cli-ci`)
 
 We also publish the same images to GitHub's Container Registry (GHRC) too:
 
 - `ghcr.io/octopusdeploylabs/octopus-cli`
 - `ghcr.io/octopusdeploylabs/octopus-cli-ci`
+- `ghcr.io/octopusdeploylabs/octo-cli-ci`
 
 ### Octopus CLI
 
@@ -54,6 +56,20 @@ A new image is built each time a new version of the `octopus` CLI is detected. T
 
 - `octopuslabs/octopus-cli-ci:latest`
 - `octopuslabs/octopus-cli-ci:VERSION`
+
+You can retrieve a list of all available tags on [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli-ci/tags).
+
+### Octo CLI CI
+
+This is a CI-server compatible image containing the (now deprecated) `octo` [command line tool](https://github.com/OctopusDeploy/OctopusCli/blob/main/README.md).
+It's identical to the [octopusdeploy/octo](https://hub.docker.com/r/octopusdeploy/octo) image except that its `ENTRYPOINT` method is overriden to be empty (`""`).
+
+The version tag corresponds to the version of the `octo` CLI on the image.
+
+#### Tags
+
+- `octopuslabs/octo-cli-ci:latest`
+- `octopuslabs/octo-cli-ci:VERSION`
 
 You can retrieve a list of all available tags on [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli-ci/tags).
 
