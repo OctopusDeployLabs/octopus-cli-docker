@@ -13,11 +13,15 @@ Images are typically available for:
 
 ## Available images
 
-The following images are built from this repository:
+The following DockerHub images are built from this repository:
 
 - [octopus-cli](#octopus-cli) (`octopuslabs/octopus-cli`)
 - [octopus-cli-ci](#octopus-cli-ci) (`octopuslabs/octopus-cli-ci`)
-- [octo-ci](#octo-ci) (`octopuslabs/octo-ci`)
+
+We also publish the same images to GitHub's Container Registry (GHRC) too:
+
+- `ghcr.io/octopusdeploylabs/octopus-cli`
+- `ghcr.io/octopusdeploylabs/octopus-cli-ci`
 
 ### Octopus CLI
 
