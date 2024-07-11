@@ -6,7 +6,10 @@ This repository contains Dockerfiles used to build container images for the [Oct
 
 Images are typically available for:
 
-- `linux/amd64` (based on `alpine`)
+- `linux/amd64`
+- `linux/arm64`
+
+ These are based on the `alpine` Linux distro.
 
 ## Available images
 
@@ -25,9 +28,7 @@ A new image is built each time a new version of the `octopus` CLI is detected. T
 #### Tags
 
 - `octopuslabs/octopus-cli:latest`
-- `octopuslabs/octopus-cli:latest-alpine`
 - `octopuslabs/octopus-cli:VERSION`
-- `octopuslabs/octopus-cli:VERSION-alpine`
 
 You can retrieve a list of all available tags on [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli/tags).
 
@@ -48,9 +49,7 @@ A new image is built each time a new version of the `octopus` CLI is detected. T
 #### Tags
 
 - `octopuslabs/octopus-cli-ci:latest`
-- `octopuslabs/octopus-cli-ci:latest-alpine`
 - `octopuslabs/octopus-cli-ci:VERSION`
-- `octopuslabs/octopus-cli-ci:VERSION-alpine`
 
 You can retrieve a list of all available tags on [DockerHub](https://hub.docker.com/r/octopuslabs/octopus-cli-ci/tags).
 
