@@ -5,7 +5,7 @@ on:
     branches: 
     - main
     paths:
-    - octo-cli/**
+    - octo-cli-ci/**
 # No schedule as this cli is deprecated
 #  schedule:
 #    - cron: '0 2 * * *'
